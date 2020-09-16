@@ -13,20 +13,19 @@ responseForm.addEventListener('submit', function(event){
 	event.preventDefault();
 	const form = new FormData(responseForm);
 	const task = new Task(form.get('taskName'))
-	addTask(task);
-	responseForm.reset();
-	taskList.innerHTML = "";
-	setTimeout(updateTask, timeout);
+	if (task.name && task.name.length > 0) {
+		addTask(task);
+		responseForm.reset();
+		taskList.innerHTML = "";
+		setTimeout(updateTask, timeout);
+	}
 })
 
-function appendTask(newTask) {
-	const {name, id} = newTask;
-	if (name && name.length > 0){
-		const listElement = document.createElement('li');
-		listElement.setAttribute("id", id);
-		listElement.innerHTML = `<input type="checkbox"><span>${id}. ${name}</span>`;
-		taskList.appendChild(listElement);
-	}
+function appendTask(task) {
+	const listElement = document.createElement('li');
+	listElement.setAttribute("id", task.id);
+	listElement.innerHTML = `<input type="checkbox"><span>${task.id}. ${task.name}</span>`;
+	taskList.appendChild(listElement);
 }
 
 function updateTask(){
@@ -37,22 +36,16 @@ function updateTask(){
 
 function addTask(task){
 	fetch(taskEndpoint, {method: 'POST', 
-	headers:  {
-		'Content-Type': 'application/json'
-	},
-	body: JSON.stringify(task)});
+		headers:  {
+			'Content-Type': 'application/json'
+		},
+		body: JSON.stringify(task)});
 }
+		
 
 const deleteForm = document.getElementById('deleteForm');
 
 deleteForm.addEventListener('submit', function(event){
-	/*event.preventDefault();
-	const form = new FormData(deleteForm);
-	const taskId = form.get('taskId');
-	deleteTask(taskId);
-	deleteForm.reset();
-	taskList.innerHTML = "";
-	setTimeout(updateTask, 500);*/
 	if (selectedId > 0) {
 		deleteTask(selectedId);
 		selectedId = 0;
@@ -70,13 +63,11 @@ const display = document.getElementById('display');
 
 taskList.addEventListener('click', function(event){
 	event.preventDefault();
-	console.log(event.target);
 	if (event.target.tagName === 'LI'){
 		selectedId = event.target.getAttribute('id');
 		let element = document.createElement('span');
 		element.innerText = selectedId;
 		display.innerHTML = element.outerHTML;
-		//deleteForm.getElementsByTagName('input').innerText = selectedId;
 	}
 })
 
