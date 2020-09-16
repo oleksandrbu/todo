@@ -1,3 +1,4 @@
+const timeout = 500;
 const responseForm = document.getElementById('responseForm');
 const taskList = document.getElementById('taskList');
 const taskEndpoint = "http://localhost:5000/api/tasks";
@@ -15,7 +16,7 @@ responseForm.addEventListener('submit', function(event){
 	addTask(task);
 	responseForm.reset();
 	taskList.innerHTML = "";
-	setTimeout(updateTask, 1000);
+	setTimeout(updateTask, timeout);
 })
 
 function appendTask(newTask) {
@@ -45,17 +46,39 @@ function addTask(task){
 const deleteForm = document.getElementById('deleteForm');
 
 deleteForm.addEventListener('submit', function(event){
-	event.preventDefault();
+	/*event.preventDefault();
 	const form = new FormData(deleteForm);
 	const taskId = form.get('taskId');
 	deleteTask(taskId);
 	deleteForm.reset();
 	taskList.innerHTML = "";
-	setTimeout(updateTask, 500);
+	setTimeout(updateTask, 500);*/
+	if (selectedId > 0) {
+		deleteTask(selectedId);
+		selectedId = 0;
+		taskList.innerHTML = "";
+		setTimeout(updateTask, timeout);
+	}
 })
 
 function deleteTask(taskId){
 	fetch(taskEndpoint + `/${taskId}`, {method: 'DELETE'});
 }
 
+let selectedId = 0;
+const display = document.getElementById('display');
+
+taskList.addEventListener('click', function(event){
+	event.preventDefault();
+	console.log(event.target);
+	if (event.target.tagName === 'LI'){
+		selectedId = event.target.getAttribute('id');
+		let element = document.createElement('span');
+		element.innerText = selectedId;
+		display.innerHTML = element.outerHTML;
+		//deleteForm.getElementsByTagName('input').innerText = selectedId;
+	}
+})
+
 updateTask();
+
