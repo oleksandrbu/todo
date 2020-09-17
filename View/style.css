@@ -32,18 +32,3 @@ li:hover {
 	background-color: black;
 	color: #ffffff;
 }
-
-#display {
-	min-width: 200px;
-	min-height: 200px;
-	background-color: rgb(206, 255, 72);
-	display: flex;
-	flex-flow: column;
-	text-align: center;
-	align-items: center;
-	justify-content: center;
-	position: absolute;
-	right: 100px;
-	top: 100px;
-	font-size: 100px;
-}

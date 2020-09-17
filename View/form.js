@@ -1,6 +1,7 @@
 const timeout = 500;
 const responseForm = document.getElementById('responseForm');
 const taskList = document.getElementById('taskList');
+const deleteForm = document.getElementById('deleteForm');
 const taskEndpoint = "http://localhost:5000/api/tasks";
 
 class Task{
@@ -41,14 +42,14 @@ function addTask(task){
 		},
 		body: JSON.stringify(task)});
 }
-		
-
-const deleteForm = document.getElementById('deleteForm');
 
 deleteForm.addEventListener('submit', function(event){
-	if (selectedId > 0) {
-		deleteTask(selectedId);
-		selectedId = 0;
+	event.preventDefault();
+	const form = new FormData(deleteForm);
+	const taskId = form.get('taskId');
+	if (taskId > 0){
+		deleteTask(taskId);
+		deleteForm.reset();
 		taskList.innerHTML = "";
 		setTimeout(updateTask, timeout);
 	}
@@ -58,16 +59,10 @@ function deleteTask(taskId){
 	fetch(taskEndpoint + `/${taskId}`, {method: 'DELETE'});
 }
 
-let selectedId = 0;
-const display = document.getElementById('display');
-
 taskList.addEventListener('click', function(event){
 	event.preventDefault();
 	if (event.target.tagName === 'LI'){
-		selectedId = event.target.getAttribute('id');
-		let element = document.createElement('span');
-		element.innerText = selectedId;
-		display.innerHTML = element.outerHTML;
+		document.querySelector('#taskId').value = event.target.getAttribute('id');
 	}
 })
 
