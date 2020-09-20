@@ -22,8 +22,8 @@ namespace mvc_project{
         }
 
         [HttpPost("")]
-        public void AddTask(Task task){
-            dbTasks.Add(task);
+        public IActionResult AddTask(Task task){
+            return new JsonResult(dbTasks.Add(task));
         }
 
         [HttpPut("{id}")]

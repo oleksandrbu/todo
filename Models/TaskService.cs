@@ -1,5 +1,5 @@
 using System.Collections.Generic;
-using System.IO;
+using System;
 using Npgsql;
 
 namespace mvc_project{
@@ -46,8 +46,8 @@ namespace mvc_project{
             return listTasks;
         }
 
-        public void Add(Task task){
-            using (var cmd = new NpgsqlCommand("INSERT INTO tasks (name, complited, groupid) VALUES (@name, @complited, @groupid);", DataBase.Connection()))
+        public Task Add(Task task){
+            using (var cmd = new NpgsqlCommand("INSERT INTO tasks (name, complited, groupid) VALUES (@name, @complited, @groupid) returning id;", DataBase.Connection()))
             {
                 if (task.Name == "") task.Name = "Unknown";
                 cmd.Parameters.AddWithValue("name", task.Name);
@@ -55,8 +55,10 @@ namespace mvc_project{
                 cmd.Parameters.AddWithValue("complited", task.Complited);
                 if (task.GroupId == null) task.GroupId = 0;
                 cmd.Parameters.AddWithValue("groupid", task.GroupId);
-                cmd.ExecuteNonQuery();
+                task.Id = Convert.ToInt32(cmd.ExecuteScalar());
             }
+
+            return task;
         }
         public Task Put(Task task){      
             using (var cmd = new NpgsqlCommand("UPDATE tasks SET name=(@name), complited=(@complited), groupid=(@groupid) WHERE id=(@id);", DataBase.Connection())){
